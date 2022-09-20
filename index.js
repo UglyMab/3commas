@@ -56,7 +56,7 @@ const keyboard = [
     },
   ],
 ];
-const keyboard4 = [["Edit bot ✏️", "Add bot ✚"], ["Back ◀"]];
+const keyboard4 = [["Edit bot ✏️", "Toggle strategy 🔄"], ["Back ◀"]];
 const keyboard3 = [
   ["Start 🚀", "Stop ⛔"],
   ["Status ✅", "Statistics 📈"],
@@ -254,7 +254,6 @@ bot.on("message", async msg => {
       });
       bot.sendMessage(chatId, newBot.name + " succesfully added! ✅");
       newBot = {};
-      return;
     }
   }
   if (msg.text === "Start 🚀") {
@@ -348,12 +347,22 @@ bot.on("message", async msg => {
     });
     return;
   }
-  if (msg.text === "Add bot ✚") {
-    bot.sendMessage(chatId, "Please forward the API_KEY to this message", {
-      reply_markup: { force_reply: true },
+  if (msg.text === "Toggle strategy 🔄") {
+    loadData.map((element, id) => {
+      let type = element.active;
+      type === "short" ? (type = "long") : (type = "short");
+      setTimeout(() => {
+        config.editConfig(id, { active: type });
+      }, 200 * id);
+      bot.sendMessage(
+        chatId,
+        type === "short"
+          ? "You choosed short strategy | " + element.name
+          : "You choosed long strategy | " + element.name
+      );
     });
     return;
-  }
+  } //   bot.sendMessage(chatId, "Please forward the API_KEY to this message", { //     reply_markup: { force_reply: true }, //   }); //   return; // } // if (msg.text === "Add bot ✚") {
   if (msg.text === "Back ◀") {
     bot.sendMessage(chatId, "MENU!", {
       reply_markup: { keyboard: keyboard3, resize_keyboard: true },
@@ -447,20 +456,6 @@ bot.on("callback_query", async query => {
         };
         console.log(obj);
       })
-    );
-    // await tc.changeBotOptions(obj);
-  }
-  if (query.data === "strategy") {
-    loadData.forEach((element, id) => {
-      let type = element.active;
-      type === "short" ? (type = "long") : (type = "short");
-      config.editConfig(id, { type });
-      bot.sendMessage(
-        chatId,
-        type === "short"
-          ? "You choosed short strategy"
-          : "You choosed long strategy"
-      );
-    });
+    ); // await tc.changeBotOptions(obj);
   }
 });

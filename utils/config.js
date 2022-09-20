@@ -16,6 +16,8 @@ export default class configBots {
       const { id } = obj;
       let data = await this.readConfig();
       data[id] = obj;
+      console.log(data, id);
+      console.log("cancel");
       const json = JSON.stringify(data);
       await fs.promises.writeFile(this.path, json);
     } catch (err) {
