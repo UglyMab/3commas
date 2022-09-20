@@ -1,0 +1,46 @@
+[
+    {
+        "id": 0,
+        "name": "Bot long name",
+        "active": "long",
+        "short": 9720599,
+        "long": 9680142,
+        "bots": [
+            {
+                "name": "My Binance Futures USDT-M USDT Long Bot1",
+                "pairs": "[\"USDT_ETHUSDT\"]",
+                "base_order_volume": "10.0",
+                "take_profit": "15.0",
+                "safety_order_volume": "19.1774",
+                "martingale_volume_coefficient": "0.2",
+                "martingale_step_coefficient": "0.2",
+                "max_safety_orders": 0,
+                "active_safety_orders_count": 0,
+                "safety_order_step_percentage": "0.25",
+                "take_profit_type": "base",
+                "strategy_list": "[{\"options\":{},\"strategy\":\"nonstop\"}]",
+                "bot_id": 9680142,
+                "_type": "long"
+            },
+            {
+                "name": "Binance Futures USDT-M USDT short Bot",
+                "pairs": "[\"USDT_ETHUSDT\"]",
+                "base_order_volume": "10.0",
+                "take_profit": "0.5",
+                "safety_order_volume": "19.1774",
+                "martingale_volume_coefficient": "0.2",
+                "martingale_step_coefficient": "0.2",
+                "max_safety_orders": 0,
+                "active_safety_orders_count": 0,
+                "safety_order_step_percentage": "0.25",
+                "take_profit_type": "base",
+                "strategy_list": "[{\"options\":{},\"strategy\":\"nonstop\"}]",
+                "bot_id": 9720599,
+                "_type": "short"
+            }
+        ],
+        "key": "376a04f0b27c62bb6de08359ea357d4185533c58175ca1ab34959ddf239dc366bd1f193f1b009afe24586203345c40a182a330bcb43e3ddca3b2fd90e36b216b08ba4ff6b813488b42ec1c4b40decafd|dd35ecef47253e19c7ee105d9d2b0b5a",
+        "secret": "e4b50200d9f4e3474fe29bace712226d144c54ce543994115772ab128eb94c3a2905c9c55412a5be91b00b5708af10cfbb2d4d2ccffe2054162374dd0453e06aa7c5ba6b6f9591df200bd7301840a036a22a415595c5e3faca72cc9b301089a042263f4c996fd28fca30253fcf6edcfde44499d603f6645784ff0acc7e6088648e36509e4c419886eb8fa76bbe04df81a007fac0d5ff361de16b6e018aa266c676b14f58b220f3fe14bbe7497e2ae3d28aecbe7409cd2f4b89617c8a3df2847a21570823186308ce670c035335629e9e|3cc8df63572b57b2c15a4aee2c88df0d"
+    }
+]
+
