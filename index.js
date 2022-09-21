@@ -331,8 +331,8 @@ bot.on("message", async msg => {
         const res = await tc.statusBot(bot_id, api_key, api_secret);
         const msg = `${res.enable
           ? bot_name + " launched ✅ | " + type
-          : bot_name + "Bot is not running ❌ | " + type} \nActive deal: ${res
-          .deal.length
+          : bot_name + " is not running ❌ | " + type} \nActive deal: ${res.deal
+          .length
           ? "\nProfit:" + res.deal[0].usd_final_profit + " USD"
           : "none"}`;
         message += msg + "\n-----\n";
@@ -453,8 +453,8 @@ bot.on("callback_query", async query => {
         chatId,
         `${res.enable
           ? bot_name + " launched ✅ | " + type
-          : bot_name + "Bot is not running ❌ | " + type} \nActive deal: ${res
-          .deal.length
+          : bot_name + " is not running ❌ | " + type} \nActive deal: ${res.deal
+          .length
           ? "\nProfit:" + res.deal[0].usd_final_profit + " USD"
           : "none"}`
       );
