@@ -15,14 +15,12 @@ export default class threeCommas {
     if (!deal_id) return;
 
     const res = await this.api.dealPanicSell(deal_id);
-    console.log(res);
   }
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   async checkDeals(time) {
-    const deals = await this.api.getDeals({ limit: 5 });
-    console.log(deals);
+    const deals = await this.api.getDeals({ limit: 1 });
     let res = { status: false };
     deals.forEach(element => {
       const deal_time = dateFormat(new Date(element.created_at));
@@ -30,6 +28,7 @@ export default class threeCommas {
         res = {
           error: element.deal_has_error,
           message: element.error_message,
+          price: element.base_order_average_price,
         };
       }
     });
@@ -86,7 +85,7 @@ export default class threeCommas {
         if (result.error) {
           return { status: false, error: result.message };
         } else {
-          return { status: true, error: false };
+          return { status: true, error: false, price: result.price };
         }
       }
     } catch (error) {

@@ -291,17 +291,28 @@ bot.on("message", async msg => {
           }
         } else {
           await tc.stopBot(bot_id, api_key, api_secret);
-          const res = await tc.startBot(bot_id, api_key, api_secret, date);
+          const res = await tc.startBot(bot_id, date);
+          console.log(res);
           if (res.status) {
-            message += bot_name + "successfully started a deal ✅\n-----\n";
-          } else {
             message +=
-              bot_name + " \n" + res.error + "\nBot stopped ❌\n-----\n";
+              bot_name +
+              " successfully started a deal ✅\nBase order price: " +
+              res.price +
+              " USD\n-----\n";
+          } else {
+            if ((res.error = "free_plan_limit_reached")) {
+              message = "Too many requests, please try again in 2 minutes";
+            } else {
+              message +=
+                bot_name + " \n" + res.error + "\nBot stopped ❌\n-----\n";
+            }
           }
         }
       })
     );
-    bot.sendMessage(chatId, message);
+    if (message.length) {
+      bot.sendMessage(chatId, message);
+    }
     return;
   }
   if (msg.text === "Stop ⛔") {
@@ -312,10 +323,10 @@ bot.on("message", async msg => {
         const api_key = encrypt.dencrypt(element.key);
         const api_secret = encrypt.dencrypt(element.secret);
         const tc = new threeCommas(api_key, api_secret);
-        await tc.stopBot(bot_id, api_key, api_secret);
+        await tc.stopBot(bot_id);
       })
     );
-    bot.sendMessage("All bots have been stopped ❌");
+    bot.sendMessage(chatId, "All bots have been stopped ❌");
     return;
   }
   if (msg.text === "Status ✅") {
@@ -328,12 +339,12 @@ bot.on("message", async msg => {
         const api_key = encrypt.dencrypt(element.key);
         const api_secret = encrypt.dencrypt(element.secret);
         const tc = new threeCommas(api_key, api_secret);
-        const res = await tc.statusBot(bot_id, api_key, api_secret);
+        const res = await tc.statusBot(bot_id);
         const msg = `${res.enable
           ? bot_name + " launched ✅ | " + type
           : bot_name + " is not running ❌ | " + type} \nActive deal: ${res.deal
           .length
-          ? "\nProfit:" + res.deal[0].usd_final_profit + " USD"
+          ? "\nProfit: " + res.deal[0].usd_final_profit + " USD"
           : "none"}`;
         message += msg + "\n-----\n";
       })
@@ -426,20 +437,38 @@ bot.on("callback_query", async query => {
   const loadData = await config.readConfig();
   if (query.data === "start_all") {
     const date = query.message.date;
-    loadData.forEach(async element => {
-      const type = element.active;
-      const bot_id = element[type];
-      const api_key = encrypt.dencrypt(element.key);
-      const api_secret = encrypt.dencrypt(element.secret);
-      const tc = new threeCommas(api_key, api_secret);
-      await tc.stopBot(bot_id, api_key, api_secret);
-      const res = await tc.startBot(bot_id, api_key, api_secret, date);
-      if (res.status) {
-        bot.sendMessage(chatId, "Deal started successfully ✅");
-      } else {
-        bot.sendMessage(chatId, res.error + "\nBot stopped ❌");
-      }
-    });
+    bot.sendMessage(chatId, "Please, wait ⌛");
+    let isEnabled = false;
+    let message = "";
+    await Promise.all(
+      loadData.map(async element => {
+        const type = element.active;
+        const bot_id = element[type];
+        const bot_name = element.name;
+        const api_key = encrypt.dencrypt(element.key);
+        const api_secret = encrypt.dencrypt(element.secret);
+        const tc = new threeCommas(api_key, api_secret);
+        await tc.stopBot(bot_id, api_key, api_secret);
+        const res = await tc.startBot(bot_id, date);
+        if (res.status) {
+          message +=
+            bot_name +
+            " successfully started a deal ✅\nBase order price: " +
+            res.price +
+            " USD\n-----\n";
+        } else {
+          if ((res.error = "free_plan_limit_reached")) {
+            message += "Too many requests, please try again in 2 minutes";
+          } else {
+            message +=
+              bot_name + " \n" + res.error + "\nBot stopped ❌\n-----\n";
+          }
+        }
+      })
+    );
+    if (message.length) {
+      bot.sendMessage(chatId, message);
+    }
   }
   if (query.data === "check") {
     loadData.forEach(async element => {
@@ -456,7 +485,7 @@ bot.on("callback_query", async query => {
           ? bot_name + " launched ✅ | " + type
           : bot_name + " is not running ❌ | " + type} \nActive deal: ${res.deal
           .length
-          ? "\nProfit:" + res.deal[0].usd_final_profit + " USD"
+          ? "\nProfit: " + res.deal[0].usd_final_profit + " USD"
           : "none"}`
       );
     });
@@ -537,6 +566,7 @@ bot.on("callback_query", async query => {
         };
         console.log(obj);
       })
-    ); // await tc.changeBotOptions(obj);
+    );
+    // await tc.changeBotOptions(obj);
   }
 });
