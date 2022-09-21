@@ -1,7 +1,7 @@
 [
     {
         "id": 0,
-        "name": "Bot long name",
+        "name": "Bot 1",
         "active": "short",
         "short": 9720599,
         "long": 9680142,
@@ -46,7 +46,7 @@
     },
     {
         "id": 1,
-        "name": "new bot",
+        "name": "Bot 2",
         "active": "short",
         "short": 9742586,
         "long": 9731821,
