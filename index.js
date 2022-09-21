@@ -385,6 +385,7 @@ bot.on("message", async msg => {
     return;
   }
   if (msg.text === "Toggle strategy 🔄") {
+    console.log(123);
     let newType = "";
     await Promise.all(
       loadData.map((element, id) => {
@@ -399,8 +400,8 @@ bot.on("message", async msg => {
     bot.sendMessage(
       chatId,
       newType === "short"
-        ? "You choosed short strategy | " + element.name
-        : "You choosed long strategy | " + element.name
+        ? "You choosed short strategy"
+        : "You choosed long strategy"
     );
     return;
   } //   bot.sendMessage(chatId, "Please forward the API_KEY to this message", { //     reply_markup: { force_reply: true }, //   }); //   return; // } // if (msg.text === "Add bot ✚") {
@@ -536,7 +537,6 @@ bot.on("callback_query", async query => {
         };
         console.log(obj);
       })
-    );
-    // await tc.changeBotOptions(obj);
+    ); // await tc.changeBotOptions(obj);
   }
 });
