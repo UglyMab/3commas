@@ -106,6 +106,7 @@ function generateKeyboard(data) {
       keyboard.push([res]);
     }
   });
+  console.log(keyboard);
   return keyboard;
 }
 function generateEditKeyboard(data, id) {
@@ -115,14 +116,14 @@ function generateEditKeyboard(data, id) {
       {
         text: "Edit long bot",
         callback_data: `edit_long: ${data.bots[0].type === "long"
-          ? "0|" + id
-          : "1|" + id}`,
+          ? id + "|0"
+          : id + "|1"}`,
       },
       {
         text: "Edit short bot",
         callback_data: `edit_short:${data.bots[1].type === "short"
-          ? "1|" + id
-          : "0|" + id}`,
+          ? id + "|1"
+          : id + "|0"}`,
       },
     ],
   ];
@@ -193,6 +194,16 @@ bot.on("message", async msg => {
       botEdit = {};
     }
     if (
+      msg.reply_to_message.text ===
+      "Please forward the bot name to this message"
+    ) {
+      bot.sendMessage(chatId, "Please forward the API_KEY to this message", {
+        reply_markup: { force_reply: true },
+      });
+      newBot.name = msg.text;
+      return;
+    }
+    if (
       msg.reply_to_message.text === "Please forward the API_KEY to this message"
     ) {
       bot.sendMessage(chatId, "Please forward the API_SECRET to this message", {
@@ -204,16 +215,6 @@ bot.on("message", async msg => {
     if (
       msg.reply_to_message.text ===
       "Please forward the API_SECRET to this message"
-    ) {
-      bot.sendMessage(chatId, "Please forward the Bot name to this message", {
-        reply_markup: { force_reply: true },
-      });
-      newBot.secret = msg.text;
-      return;
-    }
-    if (
-      msg.reply_to_message.text ===
-      "Please forward the Bot name to this message"
     ) {
       newBot.name = msg.text;
       const loadData = await config.readConfig();
@@ -258,13 +259,179 @@ bot.on("message", async msg => {
   }
   if (msg.text === "Start 🚀") {
     const date = msg.date;
-    bot.sendMessage(chatId, "Bot launched successfully! ✅\nDeal in progress ⌛");
+    bot.sendMessage(chatId, "Please, wait ⌛");
+    let isEnabled = false;
+    let message = "";
+    await Promise.all(
+      loadData.map(async element => {
+        const type = element.active;
+        const bot_id = element[type];
+        const bot_name = element.name;
+        const api_key = encrypt.dencrypt(element.key);
+        const api_secret = encrypt.dencrypt(element.secret);
+        const tc = new threeCommas(api_key, api_secret);
+        const status = await tc.statusBot(bot_id, api_key, api_secret);
+        if (status.enable && status.deal.length) {
+          if (!isEnabled) {
+            bot.sendMessage(
+              chatId,
+              "There are running bots with open deals, close open deals?",
+              {
+                reply_markup: {
+                  inline_keyboard: [
+                    [
+                      { text: "Yes", callback_data: "start_all" },
+                      { text: "Check bots", callback_data: "check" },
+                    ],
+                  ],
+                },
+              }
+            );
+            isEnabled = true;
+          }
+        } else {
+          await tc.stopBot(bot_id, api_key, api_secret);
+          const res = await tc.startBot(bot_id, api_key, api_secret, date);
+          if (res.status) {
+            message += bot_name + "successfully started a deal ✅\n-----\n";
+          } else {
+            message +=
+              bot_name + " \n" + res.error + "\nBot stopped ❌\n-----\n";
+          }
+        }
+      })
+    );
+    bot.sendMessage(chatId, message);
+    return;
+  }
+  if (msg.text === "Stop ⛔") {
+    await Promise.all(
+      loadData.map(async element => {
+        const type = element.active;
+        const bot_id = element[type];
+        const api_key = encrypt.dencrypt(element.key);
+        const api_secret = encrypt.dencrypt(element.secret);
+        const tc = new threeCommas(api_key, api_secret);
+        await tc.stopBot(bot_id, api_key, api_secret);
+      })
+    );
+    bot.sendMessage("All bots have been stopped ❌");
+    return;
+  }
+  if (msg.text === "Status ✅") {
+    let message = "";
+    await Promise.all(
+      loadData.map(async element => {
+        const type = element.active;
+        const bot_id = element[type];
+        const bot_name = element.name;
+        const api_key = encrypt.dencrypt(element.key);
+        const api_secret = encrypt.dencrypt(element.secret);
+        const tc = new threeCommas(api_key, api_secret);
+        const res = await tc.statusBot(bot_id, api_key, api_secret);
+        const msg = `${res.enable
+          ? bot_name + " launched ✅ | " + type
+          : bot_name + "Bot is not running ❌ | " + type} \nActive deal: ${res
+          .deal.length
+          ? "\nProfit:" + res.deal[0].usd_final_profit + " USD"
+          : "none"}`;
+        message += msg + "\n-----\n";
+      })
+    );
+    bot.sendMessage(chatId, message);
+    return;
+  }
+  if (msg.text === "Statistics 📈") {
+    let message = "";
+    await Promise.all(
+      loadData.map(async element => {
+        const type = element.active;
+        const api_key = encrypt.dencrypt(element.key);
+        const api_secret = encrypt.dencrypt(element.secret);
+        const tc = new threeCommas(api_key, api_secret);
+        const stat = await tc.statsBot(
+          element.long,
+          element.short,
+          api_key,
+          api_secret
+        );
+        message +=
+          element.name +
+          "\nTotal profit: " +
+          Math.round((stat.long + stat.short) * 100) / 100 +
+          " USD \n" +
+          "Long profit: " +
+          stat.long +
+          " USD \n" +
+          "Short profit: " +
+          stat.short +
+          " USD \n-----\n";
+      })
+    );
+    bot.sendMessage(chatId, message);
+    return;
+  }
+  if (msg.text === "Settings ⚙") {
+    bot.sendMessage(chatId, "Change settings or return to menu:", {
+      reply_markup: { keyboard: keyboard4, resize_keyboard: true },
+      resize_keyboard: true,
+    });
+    return;
+  }
+  if (msg.text === "Edit bot ✏️") {
+    bot.sendMessage(chatId, "Select a bot to edit", {
+      reply_markup: { inline_keyboard: generateKeyboard(loadData) },
+    });
+    return;
+  }
+  if (msg.text === "Toggle strategy 🔄") {
+    let newType = "";
+    await Promise.all(
+      loadData.map((element, id) => {
+        let type = element.active;
+        type === "short" ? (type = "long") : (type = "short");
+        newType = type;
+        setTimeout(() => {
+          config.editConfig(id, { active: type });
+        }, 500 * id);
+      })
+    );
+    bot.sendMessage(
+      chatId,
+      newType === "short"
+        ? "You choosed short strategy | " + element.name
+        : "You choosed long strategy | " + element.name
+    );
+    return;
+  } //   bot.sendMessage(chatId, "Please forward the API_KEY to this message", { //     reply_markup: { force_reply: true }, //   }); //   return; // } // if (msg.text === "Add bot ✚") {
+  if (msg.text === "Back ◀") {
+    bot.sendMessage(chatId, "Choose a command from the menu:", {
+      reply_markup: { keyboard: keyboard3, resize_keyboard: true },
+      resize_keyboard: true,
+    });
+    return;
+  }
+  bot.sendMessage(chatId, "Choose a command from the menu:", {
+    reply_markup: {
+      keyboard: keyboard3,
+      resize_keyboard: true,
+    },
+  });
+});
+bot.on("callback_query", async query => {
+  const chatId = query.message.chat.id;
+  const config = new configBots("config.json");
+  const encrypt = new Encrypter(process.env.SECRET_KEY);
+  const loadData = await config.readConfig();
+  if (query.data === "start_all") {
+    const date = query.message.date;
     loadData.forEach(async element => {
       const type = element.active;
       const bot_id = element[type];
       const api_key = encrypt.dencrypt(element.key);
       const api_secret = encrypt.dencrypt(element.secret);
       const tc = new threeCommas(api_key, api_secret);
+      await tc.stopBot(bot_id, api_key, api_secret);
       const res = await tc.startBot(bot_id, api_key, api_secret, date);
       if (res.status) {
         bot.sendMessage(chatId, "Deal started successfully ✅");
@@ -272,22 +439,8 @@ bot.on("message", async msg => {
         bot.sendMessage(chatId, res.error + "\nBot stopped ❌");
       }
     });
-    return;
   }
-  if (msg.text === "Stop ⛔") {
-    loadData.forEach(async element => {
-      const type = element.active;
-      const bot_id = element[type];
-      const bot_name = element.name;
-      const api_key = encrypt.dencrypt(element.key);
-      const api_secret = encrypt.dencrypt(element.secret);
-      const tc = new threeCommas(api_key, api_secret);
-      await tc.stopBot(bot_id, api_key, api_secret);
-      bot.sendMessage(chatId, bot_name + " stopped ❌ | " + type);
-    });
-    return;
-  }
-  if (msg.text === "Status ✅") {
+  if (query.data === "check") {
     loadData.forEach(async element => {
       const type = element.active;
       const bot_id = element[type];
@@ -298,89 +451,15 @@ bot.on("message", async msg => {
       const res = await tc.statusBot(bot_id, api_key, api_secret);
       bot.sendMessage(
         chatId,
-        res
+        `${res.enable
           ? bot_name + " launched ✅ | " + type
-          : bot_name + "Bot is not running ❌ | " + type
+          : bot_name + "Bot is not running ❌ | " + type} \nActive deal: ${res
+          .deal.length
+          ? "\nProfit:" + res.deal[0].usd_final_profit + " USD"
+          : "none"}`
       );
     });
-    return;
   }
-  if (msg.text === "Statistics 📈") {
-    const obj = {};
-    loadData.forEach(async element => {
-      const type = element.active;
-      const api_key = encrypt.dencrypt(element.key);
-      const api_secret = encrypt.dencrypt(element.secret);
-      const tc = new threeCommas(api_key, api_secret);
-      const stat = await tc.statsBot(
-        element.long,
-        element.short,
-        api_key,
-        api_secret
-      );
-      bot.sendMessage(
-        chatId,
-        element.name +
-          "\nTotal profit: " +
-          (stat.long + stat.short) +
-          " USD \n" +
-          "Long profit: " +
-          stat.long +
-          " USD \n" +
-          "Short profit: " +
-          stat.short +
-          " USD \n"
-      );
-    });
-    return;
-  }
-  if (msg.text === "Settings ⚙") {
-    bot.sendMessage(chatId, "SETTINGS!", {
-      reply_markup: { keyboard: keyboard4, resize_keyboard: true },
-      resize_keyboard: true,
-    });
-    return;
-  }
-  if (msg.text === "Edit bot ✏️") {
-    bot.sendMessage(chatId, "EDIT!", {
-      reply_markup: { inline_keyboard: generateKeyboard(loadData) },
-    });
-    return;
-  }
-  if (msg.text === "Toggle strategy 🔄") {
-    loadData.map((element, id) => {
-      let type = element.active;
-      type === "short" ? (type = "long") : (type = "short");
-      setTimeout(() => {
-        config.editConfig(id, { active: type });
-      }, 200 * id);
-      bot.sendMessage(
-        chatId,
-        type === "short"
-          ? "You choosed short strategy | " + element.name
-          : "You choosed long strategy | " + element.name
-      );
-    });
-    return;
-  } //   bot.sendMessage(chatId, "Please forward the API_KEY to this message", { //     reply_markup: { force_reply: true }, //   }); //   return; // } // if (msg.text === "Add bot ✚") {
-  if (msg.text === "Back ◀") {
-    bot.sendMessage(chatId, "MENU!", {
-      reply_markup: { keyboard: keyboard3, resize_keyboard: true },
-      resize_keyboard: true,
-    });
-    return;
-  }
-  bot.sendMessage(chatId, "Menu", {
-    reply_markup: {
-      keyboard: keyboard3,
-    },
-  });
-});
-bot.on("callback_query", async query => {
-  const chatId = query.message.chat.id;
-  const config = new configBots("config.json");
-  const encrypt = new Encrypter(process.env.SECRET_KEY);
-  const loadData = await config.readConfig();
   if (query.data === "menu") {
     bot.sendMessage(chatId, "MENU!", {
       reply_markup: { keyboard: keyboard3, resize_keyboard: true },
@@ -396,12 +475,14 @@ bot.on("callback_query", async query => {
     });
   }
   if (query.data.includes("edit_long:") || query.data.includes("edit_short:")) {
-    const id = query.data.split(":")[1];
-    console.log(id);
+    const ids = query.data.split(":")[1].trim();
+    const [id, bot_index] = ids.split("|");
+    const tp = loadData[id].bots[bot_index].take_profit;
+    const slp = loadData[id].bots[bot_index].stop_loss_percentage;
     const keyboard = [
       [
-        { text: "Edit take profit", callback_data: "edit_take:" + id },
-        { text: "Edit stop loss", callback_data: "edit_loss:" + id },
+        { text: "Edit take profit | " + tp, callback_data: "edit_take:" + ids },
+        { text: "Edit stop loss | " + slp, callback_data: "edit_loss:" + ids },
       ],
     ];
     bot.sendMessage(chatId, "Select parameter", {
@@ -414,7 +495,6 @@ bot.on("callback_query", async query => {
     const ids = query.data.split(":")[1].trim();
     const [id, bot_id] = ids.split("|");
     botEdit = { id, bot_id };
-    console.log(botEdit);
     bot.sendMessage(chatId, "Enter take profit value", {
       reply_markup: { force_reply: true },
     });
@@ -456,6 +536,7 @@ bot.on("callback_query", async query => {
         };
         console.log(obj);
       })
-    ); // await tc.changeBotOptions(obj);
+    );
+    // await tc.changeBotOptions(obj);
   }
 });

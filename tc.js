@@ -52,7 +52,7 @@ export default class threeCommas {
   async statusBot(bot_id) {
     try {
       const res = await this.api.botShow(bot_id);
-      return res.is_enabled;
+      return { enable: res.is_enabled, deal: res.active_deals };
     } catch (error) {
       console.log(error);
     }
