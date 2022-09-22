@@ -4,12 +4,15 @@ export default class configBots {
     this.path = path;
   }
   async readConfig() {
+    const folderPath = this.path.replace("/config.json", "");
     try {
       const data = await fs.promises.readFile(this.path, "utf8");
       return JSON.parse(data);
     } catch (err) {
       if (err.code === "ENOENT") {
-        fs.promises.mkdir(this.path, { recursive: true });
+        fs.promises.mkdir(folderPath, {
+          recursive: true,
+        });
         await fs.promises.writeFile(this.path, []);
       }
       console.log(err.code);

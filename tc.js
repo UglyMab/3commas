@@ -19,20 +19,9 @@ export default class threeCommas {
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  async checkDeals(time) {
-    const deals = await this.api.getDeals({ limit: 1 });
-    let res = { status: false };
-    deals.forEach(element => {
-      const deal_time = dateFormat(new Date(element.created_at));
-      if (deal_time > time) {
-        res = {
-          error: element.deal_has_error,
-          message: element.error_message,
-          price: element.base_order_average_price,
-        };
-      }
-    });
-    return res;
+  async checkDeals() {
+    const deals = await this.api.getDeals({ limit: 5 });
+    return deals;
   }
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   async statsBot(long, short) {
@@ -82,10 +71,16 @@ export default class threeCommas {
         return { status: true, error: false }; // bot.sendMessage(chatId, "Deal started successfully ✅");
       } else {
         const result = await this.checkDealsTimeout(date);
+        console.log(result);
         if (result.error) {
           return { status: false, error: result.message };
         } else {
-          return { status: true, error: false, price: result.price };
+          return {
+            status: true,
+            error: false,
+            price: result.price,
+            id: result.id,
+          };
         }
       }
     } catch (error) {
@@ -95,8 +90,20 @@ export default class threeCommas {
   checkDealsTimeout(date) {
     return new Promise((resolve, reject) => {
       setTimeout(async () => {
-        const x = await this.checkDeals(date);
-        resolve(x);
+        const deals = await this.checkDeals();
+        let res = { status: false };
+        deals.forEach(element => {
+          const deal_time = dateFormat(new Date(element.created_at));
+          if (deal_time > date) {
+            res = {
+              error: element.deal_has_error,
+              message: element.error_message,
+              price: element.base_order_average_price,
+              id: element.id,
+            };
+          }
+        });
+        resolve(res);
       }, 60000);
     });
   }
