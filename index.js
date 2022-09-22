@@ -177,7 +177,6 @@ bot.on("message", async msg => {
       await config.writeSingleConfig(botEdit.id, botEdit.bot_id, obj);
       botEdit = {};
     }
-  if (msg.reply_to_message) {
     if (msg.reply_to_message.text === "Enter take profit value") {
       const bot_id = loadData[botEdit.id].bots[botEdit.bot_id].bot_id;
       const api_key = encrypt.dencrypt(loadData[botEdit.id].key);
@@ -579,8 +578,8 @@ bot.on("callback_query", async query => {
       [
         { text: "Edit take profit | " + tp, callback_data: "edit_take:" + ids },
         { text: "Edit stop loss | " + slp, callback_data: "edit_loss:" + ids },
-        { text: "Edit base order | " + bov, callback_data: "edit_base:" + ids },
       ],
+      [{ text: "Edit base order | " + bov, callback_data: "edit_base:" + ids }],
     ];
     bot.sendMessage(chatId, "Select parameter", {
       reply_markup: {
@@ -592,7 +591,7 @@ bot.on("callback_query", async query => {
     const ids = query.data.split(":")[1].trim();
     const [id, bot_id] = ids.split("|");
     botEdit = { id, bot_id };
-    bot.sendMessage(chatId, "Enter base order value", {
+    bot.sendMessage(chatId, "Enter base value", {
       reply_markup: { force_reply: true },
     });
   }
@@ -641,7 +640,6 @@ bot.on("callback_query", async query => {
         };
         console.log(obj);
       })
-    );
-    // await tc.changeBotOptions(obj);
+    ); // await tc.changeBotOptions(obj);
   }
 });
