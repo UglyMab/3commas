@@ -149,6 +149,35 @@ bot.on("message", async msg => {
     return;
   }
   if (msg.reply_to_message) {
+    if (msg.reply_to_message.text === "Enter base order value") {
+      const bot_id = loadData[botEdit.id].bots[botEdit.bot_id].bot_id;
+      const api_key = encrypt.dencrypt(loadData[botEdit.id].key);
+      const api_secret = encrypt.dencrypt(loadData[botEdit.id].secret);
+      const tc = new threeCommas(api_key, api_secret);
+      const stat = await tc.getBotOptions(bot_id, api_key, api_secret);
+      const obj = {
+        name: stat.name,
+        pairs: JSON.stringify(stat.pairs),
+        base_order_volume: +msg.text,
+        take_profit: stat.take_profit,
+        safety_order_volume: stat.safety_order_volume,
+        martingale_volume_coefficient: stat.martingale_volume_coefficient,
+        martingale_step_coefficient: stat.martingale_step_coefficient,
+        max_safety_orders: stat.max_safety_orders,
+        active_safety_orders_count: stat.active_safety_orders_count,
+        safety_order_step_percentage: stat.safety_order_step_percentage,
+        take_profit_type: stat.take_profit_type,
+        stop_loss_percentage: stat.stop_loss_percentage,
+        strategy_list: JSON.stringify(stat.strategy_list),
+        bot_id: stat.id,
+        api_key: api_key,
+        api_secret: api_secret,
+      };
+      await tc.changeBotOptions(obj);
+      await config.writeSingleConfig(botEdit.id, botEdit.bot_id, obj);
+      botEdit = {};
+    }
+  if (msg.reply_to_message) {
     if (msg.reply_to_message.text === "Enter take profit value") {
       const bot_id = loadData[botEdit.id].bots[botEdit.bot_id].bot_id;
       const api_key = encrypt.dencrypt(loadData[botEdit.id].key);
@@ -545,16 +574,26 @@ bot.on("callback_query", async query => {
     const [id, bot_index] = ids.split("|");
     const tp = loadData[id].bots[bot_index].take_profit;
     const slp = loadData[id].bots[bot_index].stop_loss_percentage;
+    const bov = loadData[id].bots[bot_index].base_order_volume;
     const keyboard = [
       [
         { text: "Edit take profit | " + tp, callback_data: "edit_take:" + ids },
         { text: "Edit stop loss | " + slp, callback_data: "edit_loss:" + ids },
+        { text: "Edit base order | " + bov, callback_data: "edit_base:" + ids },
       ],
     ];
     bot.sendMessage(chatId, "Select parameter", {
       reply_markup: {
         inline_keyboard: keyboard,
       },
+    });
+  }
+  if (query.data.includes("edit_base:")) {
+    const ids = query.data.split(":")[1].trim();
+    const [id, bot_id] = ids.split("|");
+    botEdit = { id, bot_id };
+    bot.sendMessage(chatId, "Enter base order value", {
+      reply_markup: { force_reply: true },
     });
   }
   if (query.data.includes("edit_take:")) {
