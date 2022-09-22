@@ -56,7 +56,7 @@ const keyboard = [
     },
   ],
 ];
-const keyboard4 = [["Edit bot ✏️", "Toggle strategy 🔄"], ["Back ◀"]];
+const keyboard4 = [["Edit bot ✏️", "Toggle strategy 🔄"], [], ["Back ◀"]];
 const keyboard3 = [
   ["Start 🚀", "Stop ⛔"],
   ["Status ✅", "Statistics 📈"],
@@ -132,10 +132,18 @@ function generateEditKeyboard(data, id) {
   return keyboard;
 }
 bot.on("message", async msg => {
-  const config = new configBots("config.json");
   const encrypt = new Encrypter(process.env.SECRET_KEY);
-  const loadData = await config.readConfig();
   const chatId = msg.chat.id; // console.log(generateKeyboard(loadData));
+  const config = new configBots("config/" + chatId + "/config.json");
+  const loadData = await config.readConfig();
+  if (!loadData && !msg.reply_to_message) {
+    bot.sendMessage(chatId, "You don't have bots, do you want to add?", {
+      reply_markup: {
+        inline_keyboard: [[{ text: "Yes", callback_data: "add_bot" }]],
+      },
+    });
+    return;
+  }
   if (msg.reply_to_message) {
     if (msg.reply_to_message.text === "Enter take profit value") {
       const bot_id = loadData[botEdit.id].bots[botEdit.bot_id].bot_id;
@@ -216,12 +224,17 @@ bot.on("message", async msg => {
       msg.reply_to_message.text ===
       "Please forward the API_SECRET to this message"
     ) {
-      newBot.name = msg.text;
-      const loadData = await config.readConfig();
+      newBot.secret = msg.text;
+      console.log(newBot);
+      let loadData = await config.readConfig();
+      if (!loadData) {
+        loadData = [];
+      }
       const tc = new threeCommas(newBot.key, newBot.secret);
       const ids = await tc.getBotsId();
       const bots = [];
       const obj = {};
+      console.log(ids);
       ids.map(item => {
         if (item.strategy === "long") obj.long = item.id;
         if (item.strategy === "short") obj.short = item.id;
@@ -415,7 +428,13 @@ bot.on("message", async msg => {
         : "You choosed long strategy"
     );
     return;
-  } //   bot.sendMessage(chatId, "Please forward the API_KEY to this message", { //     reply_markup: { force_reply: true }, //   }); //   return; // } // if (msg.text === "Add bot ✚") {
+  }
+  if (msg.text === "Add bot ✚") {
+    bot.sendMessage(chatId, "Please forward the bot name to this message", {
+      reply_markup: { force_reply: true },
+    });
+    return;
+  }
   if (msg.text === "Back ◀") {
     bot.sendMessage(chatId, "Choose a command from the menu:", {
       reply_markup: { keyboard: keyboard3, resize_keyboard: true },
@@ -432,9 +451,22 @@ bot.on("message", async msg => {
 });
 bot.on("callback_query", async query => {
   const chatId = query.message.chat.id;
-  const config = new configBots("config.json");
+  const config = new configBots("config/" + chatId + "/config.json");
   const encrypt = new Encrypter(process.env.SECRET_KEY);
   const loadData = await config.readConfig();
+  if (!loadData && query.data !== "add_bot") {
+    bot.sendMessage(chatId, "You don't have bots, do you want to add?", {
+      reply_markup: {
+        inline_keyboard: [[{ text: "Yes", callback_data: "add_bot" }]],
+      },
+    });
+    return;
+  }
+  if (query.data === "add_bot") {
+    bot.sendMessage(chatId, "Please forward the bot name to this message", {
+      reply_markup: { force_reply: true },
+    });
+  }
   if (query.data === "start_all") {
     const date = query.message.date;
     bot.sendMessage(chatId, "Please, wait ⌛");
@@ -566,7 +598,6 @@ bot.on("callback_query", async query => {
         };
         console.log(obj);
       })
-    );
-    // await tc.changeBotOptions(obj);
+    ); // await tc.changeBotOptions(obj);
   }
 });

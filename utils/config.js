@@ -8,16 +8,20 @@ export default class configBots {
       const data = await fs.promises.readFile(this.path, "utf8");
       return JSON.parse(data);
     } catch (err) {
-      console.log(err);
+      if (err.code === "ENOENT") {
+        fs.promises.mkdir(this.path, { recursive: true });
+        await fs.promises.writeFile(this.path, []);
+      }
+      console.log(err.code);
     }
   }
   async writeBotConfig(obj) {
     try {
       const { id } = obj;
       let data = await this.readConfig();
+      if (!data) data = [];
+      console.log(data);
       data[id] = obj;
-      console.log(data, id);
-      console.log("cancel");
       const json = JSON.stringify(data);
       await fs.promises.writeFile(this.path, json);
     } catch (err) {

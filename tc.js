@@ -122,7 +122,7 @@ export default class threeCommas {
   }
   async getBotsId() {
     const bots = await this.api.getBots();
-
+    console.log("getBots");
     return bots;
   }
 }
