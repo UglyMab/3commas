@@ -56,7 +56,11 @@ const keyboard = [
     },
   ],
 ];
-const keyboard4 = [["Edit bot ✏️", "Toggle strategy 🔄"], [], ["Back ◀"]];
+const keyboard4 = [
+  ["Edit bot ✏️", "Toggle strategy 🔄"],
+  ["Add bot ✚"],
+  ["Back ◀"],
+];
 const keyboard3 = [
   ["Start 🚀", "Stop ⛔"],
   ["Status ✅", "Statistics 📈"],
@@ -598,6 +602,7 @@ bot.on("callback_query", async query => {
         };
         console.log(obj);
       })
-    ); // await tc.changeBotOptions(obj);
+    );
+    // await tc.changeBotOptions(obj);
   }
 });
