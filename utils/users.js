@@ -40,7 +40,6 @@ export default class usersBot {
       data.map((item, index) => {
         if (item.id === user_id) idx = index;
       });
-      console.log(data[idx]);
       let { active_deal } = params;
       data[idx].active_deal = active_deal;
       await fs.promises.writeFile(this.path, JSON.stringify(data));

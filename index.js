@@ -23,10 +23,11 @@ async function checkDeals(users) {
                 const api_key = encrypt.dencrypt(loadData[0].key);
                 const api_secret = encrypt.dencrypt(loadData[0].secret);
                 const tc = new threeCommas(api_key, api_secret);
-                const deals = await tc.checkDeals();
+              const deals = await tc.checkDeals();
                 deals.map((element) => {
                   if ((element.id = item.active_deal)) {
-                        if (element.status === 'completed' || element.status === 'stop_loss_finished') {
+                    if (element.status === 'completed' || element.status === 'stop_loss_finished') {
+                          console.log(element.status);
                             id = item.id;
                           message = 'Deal cancel';
                           users.editUsers(id,{active_deal: null });
@@ -41,9 +42,9 @@ async function checkDeals(users) {
         bot.sendMessage(id, message);
     }
 }
-setInterval(() => {
-    checkDeals(users);
-}, 10000);
+// setInterval(() => {
+//     checkDeals(users);
+// }, 10000);
 
 const keyboard = [
     [
