@@ -6,16 +6,16 @@ export default class configBots {
   async readConfig() {
     const folderPath = this.path.replace("/config.json", "");
     try {
-      const data = await fs.promises.readFile(this.path, "utf8");
+      let data = await fs.promises.readFile(this.path, "utf8");
       return JSON.parse(data);
     } catch (err) {
+      console.log(err);
       if (err.code === "ENOENT") {
         fs.promises.mkdir(folderPath, {
           recursive: true,
         });
-        await fs.promises.writeFile(this.path, []);
+        await fs.promises.writeFile(this.path, JSON.stringify([]));
       }
-      console.log(err.code);
     }
   }
   async writeBotConfig(obj) {
@@ -23,8 +23,8 @@ export default class configBots {
       const { id } = obj;
       let data = await this.readConfig();
       if (!data) data = [];
-      console.log(data);
       data[id] = obj;
+      console.log(obj);
       const json = JSON.stringify(data);
       await fs.promises.writeFile(this.path, json);
     } catch (err) {

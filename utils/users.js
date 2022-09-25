@@ -13,7 +13,7 @@ export default class usersBot {
         fs.promises.mkdir(folderPath, { recursive: true });
         await fs.promises.writeFile(this.path, []);
       }
-      console.log(err.code);
+      console.log(err);
     }
   }
   async writeUser(obj) {

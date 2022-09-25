@@ -19,22 +19,31 @@ async function checkDeals(users) {
         data.map(async (item) => {
             const config = new configBots('config/' + item.id + '/config.json');
             const loadData = await config.readConfig();
-            if (loadData) {
+            if (loadData[0] !== undefined) {
                 const api_key = encrypt.dencrypt(loadData[0].key);
                 const api_secret = encrypt.dencrypt(loadData[0].secret);
                 const tc = new threeCommas(api_key, api_secret);
-              const deals = await tc.checkDeals();
-                deals.map((element) => {
-                  if ((element.id = item.active_deal)) {
-                    if (element.status === 'completed' || element.status === 'stop_loss_finished') {
-                          console.log(element.status);
-                            id = item.id;
-                          message = 'Deal cancel';
-                          users.editUsers(id,{active_deal: null });
-                          
-                        }
+                try {
+                    const deals = await tc.checkDeals();
+                    if (!deals) {
                     }
-                });
+                    deals.map((element) => {
+                        if (element.id === item.active_deal) {
+                            if (
+                                element.status === 'completed' ||
+                                element.status === 'stop_loss_finished' ||
+                                element.status === 'panic_sold'
+                            ) {
+                                id = item.id;
+                                message =
+                                    'Deal cancel. ' + element.localized_status + '\nProfit: ' + element.usd_final_profit + ' USD';
+                                users.editUsers(id, { active_deal: null });
+                            }
+                        }
+                    });
+                } catch (error) {
+                    console.log(error);
+                }
             }
         }),
     );
@@ -42,9 +51,9 @@ async function checkDeals(users) {
         bot.sendMessage(id, message);
     }
 }
-// setInterval(() => {
-//     checkDeals(users);
-// }, 10000);
+setInterval(() => {
+    checkDeals(users);
+}, 10000);
 
 const keyboard = [
     [
@@ -288,9 +297,12 @@ bot.on('message', async (msg) => {
             }
             const tc = new threeCommas(newBot.key, newBot.secret);
             const ids = await tc.getBotsId();
+            if (ids.error) {
+                bot.sendMessage(chatId, 'Invalid api key or secret key ❌');
+                return;
+            }
             const bots = [];
             const obj = {};
-            console.log(ids);
             ids.map((item) => {
                 if (item.strategy === 'long') obj.long = item.id;
                 if (item.strategy === 'short') obj.short = item.id;
