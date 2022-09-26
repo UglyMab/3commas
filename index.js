@@ -19,16 +19,18 @@ async function checkDeals(users) {
         data.map(async (item) => {
             const config = new configBots('config/' + item.id + '/config.json');
             const loadData = await config.readConfig();
+            const active_deals = item.active_deal;
             if (loadData[0] !== undefined) {
-                const api_key = encrypt.dencrypt(loadData[0].key);
-                const api_secret = encrypt.dencrypt(loadData[0].secret);
-                const tc = new threeCommas(api_key, api_secret);
-                try {
+                loadData.map(async (el, idx) => {
+                    const api_key = encrypt.dencrypt(el.key);
+                    const api_secret = encrypt.dencrypt(el.secret);
+                    const tc = new threeCommas(api_key, api_secret);
+
                     const deals = await tc.checkDeals();
                     if (!deals) {
                     }
-                    deals.map((element) => {
-                        if (element.id === item.active_deal) {
+                    deals.map(async (element) => {
+                        if (element.id === item.active_deal[idx]) {
                             if (
                                 element.status === 'completed' ||
                                 element.status === 'stop_loss_finished' ||
@@ -36,19 +38,20 @@ async function checkDeals(users) {
                             ) {
                                 id = item.id;
                                 message =
-                                    'Deal cancel. ' + element.localized_status + '\nProfit: ' + element.usd_final_profit + ' USD';
-                                users.editUsers(id, { active_deal: null });
+                                  'Deal cancel. ' + element.localized_status + '\nProfit: ' + element.usd_final_profit + ' USD';
+                               bot.sendMessage(id, message);
+                                active_deals[idx] = null;
+                                await users.editUsers(id, { active_deal: active_deals });
                             }
                         }
                     });
-                } catch (error) {
-                    console.log(error);
-                }
+                });
             }
         }),
     );
+    console.log(message, id);
     if (message) {
-        bot.sendMessage(id, message);
+       
     }
 }
 setInterval(() => {
@@ -178,7 +181,7 @@ bot.on('message', async (msg) => {
     const config = new configBots('config/' + chatId + '/config.json');
     const loadData = await config.readConfig();
     if (msg.text === '/start') {
-        users.writeUser({ id: msg.chat.id, username: msg.chat.username, active_deal: null });
+        users.writeUser({ id: msg.chat.id, username: msg.chat.username, active_deal: [null] });
         return;
     }
     if (!loadData && !msg.reply_to_message) {
@@ -343,8 +346,15 @@ bot.on('message', async (msg) => {
         bot.sendMessage(chatId, 'Please, wait ⌛');
         let isEnabled = false;
         let message = '';
+        const data = await users.readUsers();
+        let active_deals = [];
+        data.map((el) => {
+            if (el.id === chatId) {
+                active_deals = el.active_deal;
+            }
+        });
         await Promise.all(
-            loadData.map(async (element) => {
+            loadData.map(async (element, idx) => {
                 const type = element.active;
                 const bot_id = element[type];
                 const bot_name = element.name;
@@ -372,9 +382,10 @@ bot.on('message', async (msg) => {
                     console.log(res);
                     if (res.status) {
                         message += bot_name + ' successfully started a deal ✅\nBase order price: ' + res.price + ' USD\n-----\n';
-                        users.editUsers(chatId, { active_deal: res.id });
+                        active_deals[idx] = res.id;
+                        users.editUsers(chatId, { active_deal: active_deals });
                     } else {
-                        if ((res.error = 'free_plan_limit_reached')) {
+                        if ((res.error === 'free_plan_limit_reached')) {
                             message = 'Too many requests, please try again in 2 minutes';
                         } else {
                             message += bot_name + ' \n' + res.error + '\nBot stopped ❌\n-----\n';
