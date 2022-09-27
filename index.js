@@ -345,6 +345,14 @@ bot.on("message", async (msg) => {
       newBot = {};
     }
   }
+  if (loadData.length === 0 && msg.text !== "Settings ⚙" && msg.text !== 'Add bot ✚') {
+    bot.sendMessage(chatId, "You don't have bots, do you want to add?", {
+      reply_markup: {
+        inline_keyboard: [[{ text: "Yes", callback_data: "add_bot" }]],
+      },
+    });
+    return;
+  }
   if (msg.text === "Start 🚀") {
     const date = msg.date;
     bot.sendMessage(chatId, "Please, wait ⌛");
@@ -542,7 +550,7 @@ bot.on("callback_query", async (query) => {
   const config = new configBots("config/" + chatId + "/config.json");
   const encrypt = new Encrypter(process.env.SECRET_KEY);
   const loadData = await config.readConfig();
-  if (!loadData && query.data !== "add_bot") {
+  if (loadData.length === 0 && query.data !== "add_bot") {
     bot.sendMessage(chatId, "You don't have bots, do you want to add?", {
       reply_markup: {
         inline_keyboard: [[{ text: "Yes", callback_data: "add_bot" }]],

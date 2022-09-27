@@ -1,1 +1,6 @@
-[{"id":408909550,"username":"uglymab","active_deal":[null,null,null]},{"id":1210523416,"username":"tatefi","active_deal":null}]
+[
+  { "id": 408909550, "username": "uglymab", "active_deal": [null, null, null] },
+  { "id": 1210523416, "username": "tatefi", "active_deal": null },
+  { "id": 146470126, "username": "tucano1000", "active_deal": [null] },
+  { "id": 1972808904, "username": "petrowich_arthur", "active_deal": [null] }
+]
