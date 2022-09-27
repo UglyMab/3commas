@@ -1,93 +1,182 @@
 [
-    {
-        "id": 0,
-        "name": "bot",
-        "active": "short",
-        "short": 9720599,
-        "long": 9680142,
-        "bots": [
-            {
-                "name": "Binance Futures USDT-M USDT short Bot",
-                "pairs": "[\"USDT_ETHUSDT\"]",
-                "base_order_volume": "10.0",
-                "take_profit": "0.35",
-                "safety_order_volume": "19.1774",
-                "martingale_volume_coefficient": "0.2",
-                "martingale_step_coefficient": "0.2",
-                "max_safety_orders": 0,
-                "active_safety_orders_count": 0,
-                "safety_order_step_percentage": "0.25",
-                "take_profit_type": "base",
-                "strategy_list": "[{\"options\":{},\"strategy\":\"nonstop\"}]",
-                "stop_loss_percentage": "0.2",
-                "bot_id": 9720599,
-                "type": "short"
-            },
-            {
-                "name": "My Binance Futures USDT-M USDT Long Bot1",
-                "pairs": "[\"USDT_ETHUSDT\"]",
-                "base_order_volume": "10.0",
-                "take_profit": 0.2,
-                "safety_order_volume": "19.1774",
-                "martingale_volume_coefficient": "0.2",
-                "martingale_step_coefficient": "0.2",
-                "max_safety_orders": 0,
-                "active_safety_orders_count": 0,
-                "safety_order_step_percentage": "0.25",
-                "take_profit_type": "base",
-                "stop_loss_percentage": "0.25",
-                "strategy_list": "[{\"options\":{},\"strategy\":\"nonstop\"}]",
-                "bot_id": 9680142,
-                "type": "long"
-            }
-        ],
-        "key": "69f9e5ed3c0545f3841b4395fd0f482283a83a3d8690fd50304628af209eac6dc84459c7b8a37afed4242fa2888698fd07a84194ffd3c5bb589a06332c007b15a267b7dc066c909b8a4808caab29484d|e44bdd51212385585626b9e9c73af49d",
-        "secret": "d85f68178c5fd983cb9b5ea0ec9cee3affe3ae83a8033d52055c6b25168e322556a4206fa5092255d3a6c5479233e81d6ca32787fa95d8fe1b4f8a91f851b1f358d4bacd341c9cea5eaa2d188c6f151a42f55ed297dddec9b52709ecd2fc6fac8246e12a2dd93d9df32067301cfb13484b84927932a67ca0e05bd756a236388b8595fcc1afcff75305815b08d3e42a73a1e36b7788b43f03f3f18b8735ae4d1b76d59a62a71f5abb90da2628016735dfd4dcd38218697e0916fe43316f148bfee992a865535f7848c5c92a19e35818a0|47c5f498f5f16f6ff455b2bfd4c3ea40"
-    },
-    {
-        "id": 1,
-        "name": "bot 2",
-        "active": "short",
-        "short": 9742586,
-        "long": 9731821,
-        "bots": [
-            {
-                "name": "Binance Futures USDT-M USDT short Bot",
-                "pairs": "[\"USDT_ETHUSDT\"]",
-                "base_order_volume": "10.0",
-                "take_profit": "0.35",
-                "safety_order_volume": "19.8173",
-                "martingale_volume_coefficient": "0.1",
-                "martingale_step_coefficient": "1.0",
-                "max_safety_orders": 0,
-                "active_safety_orders_count": 1,
-                "safety_order_step_percentage": "1.0",
-                "take_profit_type": "total",
-                "strategy_list": "[{\"options\":{},\"strategy\":\"nonstop\"}]",
-                "stop_loss_percentage": "0.26",
-                "bot_id": 9742586,
-                "type": "short"
-            },
-            {
-                "name": "Binance Futures USDT-M - Bot1 USDT Long Bot",
-                "pairs": "[\"USDT_ETHUSDT\"]",
-                "base_order_volume": "10.0",
-                "take_profit": "0.35",
-                "safety_order_volume": "19.8173",
-                "martingale_volume_coefficient": "0.1",
-                "martingale_step_coefficient": "1.0",
-                "max_safety_orders": 0,
-                "active_safety_orders_count": 1,
-                "safety_order_step_percentage": "1.0",
-                "take_profit_type": "total",
-                "strategy_list": "[{\"options\":{},\"strategy\":\"nonstop\"}]",
-                "stop_loss_percentage": "0.26",
-                "bot_id": 9731821,
-                "type": "long"
-            }
-        ],
-        "key": "6f8e44b9f4da206fd266e55423a7580acb05b9ceacdc8912172603baac2bfd46d973a1b51c6178279b46bef8fd46640ef9856b14710dd478b425365afc4369e75dd6642dfd2973dab4f0ee06f0189648|513ff9b27c61731eba797b2edef21bc5",
-        "secret": "20369022ddd5702d0fec780e573fc8ba52534e4df318baa7f324e185767f3dc0cc32496f38f61a64b17c62e796c8be33335a4e2eb90896846d767a7c42f9dc7e15f491060ab7f51045c1291193366d09dacbd4770e5a2ce4e6b0c338025aea2c713c72f5a64515a9a9496150496eb0e35dae2327f20ac4f728b51fbacf070725493ba8fd4746107d5362e0993adf0e637bcae94c0f50bd7000652da88fc499d622f9ef266317d1b7895c1df642cd09f921d4dc0988cffc6cbc9d02e0e3a0dfefb3f3ef4c606ad3788c336b58ad6f138a|12deabb18a283d9c0df0c188d8d2489f"
-    }
+  {
+    "id": 0,
+    "name": "bot",
+    "active": "short",
+    "short": 9720599,
+    "long": 9680142,
+    "bots": [
+      {
+        "name": "Binance Futures USDT-M USDT short Bot",
+        "pairs": "[\"USDT_ETHUSDT\"]",
+        "base_order_volume": "10.0",
+        "take_profit": "0.35",
+        "safety_order_volume": "19.1774",
+        "martingale_volume_coefficient": "0.2",
+        "martingale_step_coefficient": "0.2",
+        "max_safety_orders": 0,
+        "active_safety_orders_count": 0,
+        "safety_order_step_percentage": "0.25",
+        "take_profit_type": "base",
+        "strategy_list": "[{\"options\":{},\"strategy\":\"nonstop\"}]",
+        "stop_loss_percentage": "0.2",
+        "bot_id": 9720599,
+        "type": "short"
+      },
+      {
+        "name": "My Binance Futures USDT-M USDT Long Bot1",
+        "pairs": "[\"USDT_ETHUSDT\"]",
+        "base_order_volume": "10.0",
+        "take_profit": 0.2,
+        "safety_order_volume": "19.1774",
+        "martingale_volume_coefficient": "0.2",
+        "martingale_step_coefficient": "0.2",
+        "max_safety_orders": 0,
+        "active_safety_orders_count": 0,
+        "safety_order_step_percentage": "0.25",
+        "take_profit_type": "base",
+        "stop_loss_percentage": "0.25",
+        "strategy_list": "[{\"options\":{},\"strategy\":\"nonstop\"}]",
+        "bot_id": 9680142,
+        "type": "long"
+      }
+    ],
+    "key": "69f9e5ed3c0545f3841b4395fd0f482283a83a3d8690fd50304628af209eac6dc84459c7b8a37afed4242fa2888698fd07a84194ffd3c5bb589a06332c007b15a267b7dc066c909b8a4808caab29484d|e44bdd51212385585626b9e9c73af49d",
+    "secret": "d85f68178c5fd983cb9b5ea0ec9cee3affe3ae83a8033d52055c6b25168e322556a4206fa5092255d3a6c5479233e81d6ca32787fa95d8fe1b4f8a91f851b1f358d4bacd341c9cea5eaa2d188c6f151a42f55ed297dddec9b52709ecd2fc6fac8246e12a2dd93d9df32067301cfb13484b84927932a67ca0e05bd756a236388b8595fcc1afcff75305815b08d3e42a73a1e36b7788b43f03f3f18b8735ae4d1b76d59a62a71f5abb90da2628016735dfd4dcd38218697e0916fe43316f148bfee992a865535f7848c5c92a19e35818a0|47c5f498f5f16f6ff455b2bfd4c3ea40"
+  },
+  {
+    "id": 1,
+    "name": "bot 2",
+    "active": "short",
+    "short": 9742586,
+    "long": 9731821,
+    "bots": [
+      {
+        "name": "Binance Futures USDT-M USDT short Bot",
+        "pairs": "[\"USDT_ETHUSDT\"]",
+        "base_order_volume": "10.0",
+        "take_profit": "0.35",
+        "safety_order_volume": "19.8173",
+        "martingale_volume_coefficient": "0.1",
+        "martingale_step_coefficient": "1.0",
+        "max_safety_orders": 0,
+        "active_safety_orders_count": 1,
+        "safety_order_step_percentage": "1.0",
+        "take_profit_type": "total",
+        "strategy_list": "[{\"options\":{},\"strategy\":\"nonstop\"}]",
+        "stop_loss_percentage": "0.26",
+        "bot_id": 9742586,
+        "type": "short"
+      },
+      {
+        "name": "Binance Futures USDT-M - Bot1 USDT Long Bot",
+        "pairs": "[\"USDT_ETHUSDT\"]",
+        "base_order_volume": "10.0",
+        "take_profit": "0.35",
+        "safety_order_volume": "19.8173",
+        "martingale_volume_coefficient": "0.1",
+        "martingale_step_coefficient": "1.0",
+        "max_safety_orders": 0,
+        "active_safety_orders_count": 1,
+        "safety_order_step_percentage": "1.0",
+        "take_profit_type": "total",
+        "strategy_list": "[{\"options\":{},\"strategy\":\"nonstop\"}]",
+        "stop_loss_percentage": "0.26",
+        "bot_id": 9731821,
+        "type": "long"
+      }
+    ],
+    "key": "6f8e44b9f4da206fd266e55423a7580acb05b9ceacdc8912172603baac2bfd46d973a1b51c6178279b46bef8fd46640ef9856b14710dd478b425365afc4369e75dd6642dfd2973dab4f0ee06f0189648|513ff9b27c61731eba797b2edef21bc5",
+    "secret": "20369022ddd5702d0fec780e573fc8ba52534e4df318baa7f324e185767f3dc0cc32496f38f61a64b17c62e796c8be33335a4e2eb90896846d767a7c42f9dc7e15f491060ab7f51045c1291193366d09dacbd4770e5a2ce4e6b0c338025aea2c713c72f5a64515a9a9496150496eb0e35dae2327f20ac4f728b51fbacf070725493ba8fd4746107d5362e0993adf0e637bcae94c0f50bd7000652da88fc499d622f9ef266317d1b7895c1df642cd09f921d4dc0988cffc6cbc9d02e0e3a0dfefb3f3ef4c606ad3788c336b58ad6f138a|12deabb18a283d9c0df0c188d8d2489f"
+  },
+  {
+    "id": 2,
+    "name": "bot 3",
+    "active": "long",
+    "short": 9776642,
+    "long": 9776645,
+    "bots": [
+      {
+        "name": "USDT Long Bot",
+        "pairs": "[\"USDT_ETHUSDT\"]",
+        "base_order_volume": "10.0",
+        "take_profit": "0.35",
+        "safety_order_volume": "19.8173",
+        "martingale_volume_coefficient": "0.1",
+        "martingale_step_coefficient": "1.0",
+        "max_safety_orders": 0,
+        "active_safety_orders_count": 1,
+        "safety_order_step_percentage": "1.0",
+        "take_profit_type": "total",
+        "strategy_list": "[{\"options\":{},\"strategy\":\"nonstop\"}]",
+        "stop_loss_percentage": "0.26",
+        "bot_id": 9776645,
+        "type": "long"
+      },
+      {
+        "name": "USDT Short Bot",
+        "pairs": "[\"USDT_ETHUSDT\"]",
+        "base_order_volume": "10.0",
+        "take_profit": "0.35",
+        "safety_order_volume": "19.8173",
+        "martingale_volume_coefficient": "0.1",
+        "martingale_step_coefficient": "1.0",
+        "max_safety_orders": 0,
+        "active_safety_orders_count": 1,
+        "safety_order_step_percentage": "1.0",
+        "take_profit_type": "total",
+        "strategy_list": "[{\"options\":{},\"strategy\":\"nonstop\"}]",
+        "stop_loss_percentage": "0.26",
+        "bot_id": 9776642,
+        "type": "short"
+      }
+    ],
+    "key": "ac4ff25361b974447365b40fd176415af40c7ee6fc32b2e5be9fd24daef8d6f168d970350271bf2f34cc01fb5f94a67149616fd4fde4d13f5ac979a53be243cf75ee48786a7f4ffca3143dd847f826e0|30a2b106d30d538655444c400cae8673",
+    "secret": "d8d163c0594553cfd9986a12e74b2a3057836ffed099af81923a96e9823dc6109da46dcd0b147cf8c668bf77e0b3b6b6407989856f5ac7ce61370ca190aa65dd05e6ad6d20815c9ef16647eea3aa259577c5229b75fe3b8436339f2698d7ec2c77975b104e0a42f49ce3112f95ea03cb55e00dff69e5714d30c8bece7bd8260bbdb6c85f67e8612e5d1290ea5f79f638576ad46a874c836aef4f66a67c1a7874e73ad0b445e83dd45d00aaa896542663097ca79a3e7510d88edff2984333d7a7311ce9afb688c97ca4e0dd6e53f59f4c|f2293105156ea12b6597523e6a0799b1"
+  },
+  {
+    "id": 3,
+    "name": "bot 4",
+    "active": "long",
+    "short": 9776658,
+    "long": 9776648,
+    "bots": [
+      {
+        "name": "USDT Short Bot",
+        "pairs": "[\"USDT_ETHUSDT\"]",
+        "base_order_volume": "10.0",
+        "take_profit": "0.35",
+        "safety_order_volume": "19.8173",
+        "martingale_volume_coefficient": "0.1",
+        "martingale_step_coefficient": "1.0",
+        "max_safety_orders": 0,
+        "active_safety_orders_count": 1,
+        "safety_order_step_percentage": "1.0",
+        "take_profit_type": "total",
+        "strategy_list": "[{\"options\":{},\"strategy\":\"nonstop\"}]",
+        "stop_loss_percentage": "0.26",
+        "bot_id": 9776658,
+        "type": "short"
+      },
+      {
+        "name": "USDT Long Bot",
+        "pairs": "[\"USDT_ETHUSDT\"]",
+        "base_order_volume": "10.0",
+        "take_profit": "0.35",
+        "safety_order_volume": "19.8173",
+        "martingale_volume_coefficient": "0.1",
+        "martingale_step_coefficient": "1.0",
+        "max_safety_orders": 0,
+        "active_safety_orders_count": 1,
+        "safety_order_step_percentage": "1.0",
+        "take_profit_type": "total",
+        "strategy_list": "[{\"options\":{},\"strategy\":\"nonstop\"}]",
+        "stop_loss_percentage": "0.26",
+        "bot_id": 9776648,
+        "type": "long"
+      }
+    ],
+    "key": "0341f506861cc3dd3e818ca08a7c1c0dc4ec576eaaa057377698f43cb4d7e62cef65bf1808b1597d7b8aae53f171d98287ed47d35f4438e5228f1f0551bb82bebb0b066d5b5dd2c7b20d122c0c5b41d6|fbd3ac55d66178e93af19578323e7463",
+    "secret": "a98e49b681cf2f28f547d021ac6737264a48d27fab1b9f4de4a4a1aef40833518b887763ce16119166adc7f528820ef4aa9359e9ae7f86c4f7b030e8137239f375a047bf2cfd8ee20b831907acd992922e095ba33a610c4ca2ae969ea26b879b0495f4f9e50b82f3f59cfcd4d7ab823eae0e131d7fb0416b8b35c5d21928bfa0519d6118da6ccb4e12a96a2cc37a7ee8543a503e1ed28132a5b6207336e8627cf1eee4e2116f81f83aa4ffcd004d69e079d5e5a3b6065c5c964f62de4bda3b9842bce96468ece2f34e0a0bc2a7ed7956|dd92744e0c686bb96b6e1f6801ecbad0"
+  }
 ]
-

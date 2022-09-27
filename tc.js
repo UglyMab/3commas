@@ -20,8 +20,12 @@ export default class threeCommas {
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   async checkDeals() {
-    const deals = await this.api.getDeals({ limit: 5 });
-    return deals;
+    try {
+      const deals = await this.api.getDeals({ limit: 1 });
+      return deals;
+    } catch (error) {
+      console.log(error);
+    }
   }
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   async statsBot(long, short) {
@@ -91,7 +95,11 @@ export default class threeCommas {
     return new Promise((resolve, reject) => {
       setTimeout(async () => {
         const deals = await this.checkDeals();
+
         let res = { status: false };
+        if (!deals) {
+          return;
+        }
         deals.forEach(element => {
           const deal_time = dateFormat(new Date(element.created_at));
           if (deal_time > date) {
